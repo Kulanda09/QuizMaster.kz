@@ -1,0 +1,40 @@
+{
+  "url": "http://127.0.0.1:8081/",
+  "viewports": {
+    "desktop": {
+      "width": 1280,
+      "height": 800,
+      "status": 200,
+      "title": "QuizMaster",
+      "hasCanvas": false,
+      "bodyTextLen": 579,
+      "bodyTextHash": "9589e2ab8811919bbc96d0e86d0c7dfbc3559c003e0660a9d8dd06a73773718d",
+      "bodyTextPrefix": "QM QuizMaster Пәндер Кіру IT БӨЛІМІ · QUIZ LAB Білімді өлше. Нәт",
+      "horizontalOverflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "/workspace/screenshots/app-builder-built.png"
+    },
+    "mobile": {
+      "width": 390,
+      "height": 844,
+      "status": 200,
+      "title": "QuizMaster",
+      "hasCanvas": false,
+      "bodyTextLen": 572,
+      "bodyTextHash": "72c3d2c67719935169e072743cac2cf6d58d4a6893d493bc215be012a3e05690",
+      "bodyTextPrefix": "QM QuizMaster Кіру IT БӨЛІМІ · QUIZ LAB Білімді өлше. Нәтижені с",
+      "horizontalOverflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "/workspace/screenshots/app-builder-built-mobile.png"
+    }
+  },
+  "brandWarnings": [],
+  "authWarnings": [],
+  "verdictFile": "/workspace/screenshots/app-builder-built.json",
+  "divergesFromBaseline": true,
+  "baselineReasons": [
+    "mobile: body text replaced (similar length, page start changed)"
+  ]
+}

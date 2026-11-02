@@ -1,0 +1,36 @@
+{
+  "url": "http://127.0.0.1:8080/",
+  "viewports": {
+    "desktop": {
+      "width": 1280,
+      "height": 800,
+      "status": 200,
+      "title": "QuizMaster",
+      "hasCanvas": false,
+      "bodyTextLen": 691,
+      "bodyTextHash": "c2e4b6e273549a88b8571610f317160e49c52f194a35507145f5d0c1c36abc7b",
+      "bodyTextPrefix": "QM QuizMaster Пәндер Баттл Кіру QUIZMASTER Білімді ойын арқылы а",
+      "horizontalOverflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "/workspace/screenshots/app-builder-preview.png"
+    },
+    "mobile": {
+      "width": 390,
+      "height": 844,
+      "status": 200,
+      "title": "QuizMaster",
+      "hasCanvas": false,
+      "bodyTextLen": 684,
+      "bodyTextHash": "d15186b8490e8fdfaae2d713d8af5b22815053d18310c6ec0795ef7640281e63",
+      "bodyTextPrefix": "QM QuizMaster Баттл Кіру QUIZMASTER Білімді ойын арқылы арттыр! ",
+      "horizontalOverflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "/workspace/screenshots/app-builder-preview-mobile.png"
+    }
+  },
+  "brandWarnings": [],
+  "authWarnings": [],
+  "verdictFile": "/workspace/screenshots/app-builder-preview.json"
+}

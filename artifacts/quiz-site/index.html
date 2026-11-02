@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QuizZone — Тесттер мен Викториналар</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="container">
+      <div class="logo" onclick="showHome()">
+        <span class="logo-icon">🎯</span>
+        <span class="logo-text">QuizZone</span>
+      </div>
+      <nav class="nav">
+        <button class="nav-btn active" onclick="showHome()">Басты бет</button>
+        <button class="nav-btn" onclick="showQuizzes()">Викториналар</button>
+        <button class="nav-btn" onclick="showAbout()">Біз туралы</button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="main">
+    <!-- HOME SECTION -->
+    <section id="home" class="section active">
+      <div class="hero">
+        <div class="hero-content">
+          <h1 class="hero-title">Білімді тексер,<br><span class="highlight">жеңіске жет!</span></h1>
+          <p class="hero-subtitle">Қызықты тесттер мен викториналар арқылы біліміңді сынап көр. Әр дұрыс жауап — жаңа жетістік!</p>
+          <button class="btn btn-primary btn-lg" onclick="showQuizzes()">
+            Викторинаны бастау →
+          </button>
+        </div>
+        <div class="hero-illustration">
+          <div class="floating-card card1">📚</div>
+          <div class="floating-card card2">🧠</div>
+          <div class="floating-card card3">🏆</div>
+          <div class="floating-card card4">✨</div>
+        </div>
+      </div>
+
+      <div class="features">
+        <div class="feature-card">
+          <div class="feature-icon">⚡</div>
+          <h3>Жылдам</h3>
+          <p>Бірнеше минутта біліміңді тексер</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🎨</div>
+          <h3>Қызықты</h3>
+          <p>Әдемі дизайн және түрлі тақырыптар</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📊</div>
+          <h3>Нәтиже</h3>
+          <p>Дереу ұпай мен пайызды көр</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- QUIZZES LIST SECTION -->
+    <section id="quizzes" class="section">
+      <div class="container">
+        <h2 class="section-title">Викториналарды таңда</h2>
+        <p class="section-subtitle">Өзіңе ұнайтын тақырыпты таңдап, біліміңді сынап көр</p>
+        
+        <div class="quiz-grid" id="quizGrid">
+          <!-- Quizzes will be injected by JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- QUIZ PLAY SECTION -->
+    <section id="quiz-play" class="section">
+      <div class="container">
+        <div class="quiz-header">
+          <button class="btn btn-outline btn-sm" onclick="showQuizzes()">← Артқа</button>
+          <div class="quiz-progress">
+            <div class="progress-bar">
+              <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <span class="progress-text" id="progressText">1 / 5</span>
+          </div>
+        </div>
+
+        <div class="quiz-card" id="quizCard">
+          <div class="question-number" id="questionNumber">Сұрақ 1</div>
+          <h2 class="question-text" id="questionText">Сұрақ жүктелуде...</h2>
+          
+          <div class="options" id="optionsContainer">
+            <!-- Options will be injected -->
+          </div>
+        </div>
+
+        <div class="quiz-actions" id="quizActions">
+          <button class="btn btn-primary" id="nextBtn" onclick="nextQuestion()" disabled>
+            Келесі сұрақ →
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- RESULT SECTION -->
+    <section id="result" class="section">
+      <div class="container">
+        <div class="result-card">
+          <div class="result-emoji" id="resultEmoji">🎉</div>
+          <h2 class="result-title" id="resultTitle">Керемет!</h2>
+          <p class="result-score">Сіздің нәтижеңіз:</p>
+          <div class="score-circle">
+            <span class="score-number" id="scoreNumber">0</span>
+            <span class="score-total">/ <span id="totalQuestions">0</span></span>
+          </div>
+          <p class="result-percent" id="resultPercent">0%</p>
+          <p class="result-message" id="resultMessage">Жақсы нәтиже!</p>
+          
+          <div class="result-actions">
+            <button class="btn btn-primary" onclick="restartQuiz()">Қайта өту</button>
+            <button class="btn btn-outline" onclick="showQuizzes()">Басқа викторина</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ABOUT SECTION -->
+    <section id="about" class="section">
+      <div class="container">
+        <h2 class="section-title">Біз туралы</h2>
+        <div class="about-content">
+          <p>QuizZone — бұл білімді қызықты түрде тексеруге арналған заманауи платформа. Біз әртүрлі тақырыптар бойынша тесттер мен викториналар ұсынамыз.</p>
+          <p>Сайт толығымен тегін және браузерде жұмыс істейді. Интернет қосылымы қажет емес (файлдарды сақтағаннан кейін).</p>
+          <div class="about-stats">
+            <div class="stat">
+              <span class="stat-number">4+</span>
+              <span class="stat-label">Викторина</span>
+            </div>
+            <div class="stat">
+              <span class="stat-number">20+</span>
+              <span class="stat-label">Сұрақ</span>
+            </div>
+            <div class="stat">
+              <span class="stat-number">100%</span>
+              <span class="stat-label">Тегін</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <p>© 2026 QuizZone. Барлық құқықтар қорғалған.</p>
+      <p class="footer-note">Білім — ең үлкен байлық ✨</p>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
