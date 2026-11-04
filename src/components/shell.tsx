@@ -17,12 +17,18 @@ export function Shell({ children }: { children: React.ReactNode }) {
             <Link to="/" className="hidden text-muted hover:text-fg sm:inline">
               Пәндер
             </Link>
-            <Link to="/battle" className="text-muted hover:text-fg">
+            <Link to="/battle" className="hidden text-muted hover:text-fg sm:inline">
               Баттл
+            </Link>
+            <Link to="/join" className="text-muted hover:text-fg">
+              Код
             </Link>
             {user ? (
               <>
-                <Link to="/pro" className="text-muted hover:text-fg">
+                <Link to="/create" className="font-semibold text-signal hover:text-fg">
+                  AI
+                </Link>
+                <Link to="/pro" className="hidden text-muted hover:text-fg sm:inline">
                   Pro
                 </Link>
                 <Link to="/cabinet" className="text-muted hover:text-fg">

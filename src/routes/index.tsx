@@ -18,10 +18,13 @@ function Home() {
           <p className="mt-5 max-w-lg text-lg leading-relaxed text-muted">
             Өз квизіңді жаса, білім сына, достарыңмен жарыс!
           </p>
-          <div className="mt-8">
+          <div className="mt-8 flex flex-wrap gap-3">
             <a href="#subjects" className="btn-3d">
               Тест өту
             </a>
+            <Link to="/join" className="btn-ghost">
+              Кодпен кіру
+            </Link>
           </div>
           <p className="mt-4 max-w-md text-sm text-muted">
             Пән тесттері аккаунтсыз ашық. Онлайн қарсылас әлі жоқ — жеке таймер баттлы жұмыс істейді.

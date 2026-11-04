@@ -31,6 +31,7 @@ export type QuizDraft = {
 export type OwnQuiz = QuizDraft & {
   id: number;
   slug: string;
+  join_code: string;
   created_at: string;
   participants: number;
 };
@@ -55,6 +56,7 @@ export type AttemptView = {
 type QuestionRow = {
   id: number;
   slug: string;
+  join_code: string | null;
   title: string;
   description: string;
   subject: string;
@@ -102,6 +104,7 @@ function toOwn(row: QuestionRow): OwnQuiz {
   return {
     id: row.id,
     slug: row.slug,
+    join_code: row.join_code ?? "",
     title: row.title,
     description: row.description ?? "",
     subject: row.subject,
@@ -114,6 +117,39 @@ function toOwn(row: QuestionRow): OwnQuiz {
 
 function newSlug() {
   return crypto.randomUUID().replace(/-/g, "").slice(0, 12);
+}
+
+const CODE_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+
+function newCode() {
+  const bytes = crypto.getRandomValues(new Uint8Array(6));
+  return Array.from(bytes, (byte) => CODE_ALPHABET[byte % CODE_ALPHABET.length]).join("");
+}
+
+async function ensureJoinCode(
+  sql: Awaited<ReturnType<typeof getSql>>,
+  row: { id: number; join_code: string | null },
+) {
+  if (row.join_code) return row.join_code;
+  for (let attempt = 0; attempt < 5; attempt += 1) {
+    const code = newCode();
+    try {
+      const updated = await sql<{ join_code: string }>`
+        update custom_quizzes
+        set join_code = ${code}
+        where id = ${row.id} and join_code is null
+        returning join_code
+      `;
+      if (updated[0]?.join_code) return updated[0].join_code;
+    } catch {
+      continue;
+    }
+    const again = await sql<{ join_code: string | null }>`
+      select join_code from custom_quizzes where id = ${row.id}
+    `;
+    if (again[0]?.join_code) return again[0].join_code;
+  }
+  throw new Error("Код берілмеді");
 }
 
 export const listPublicQuizzes = createServerFn({ method: "GET" }).handler(async (): Promise<PublicQuizCard[]> => {
@@ -153,7 +189,7 @@ export const getPlayQuiz = createServerFn({ method: "GET" })
     const rows = await sql<{ title: string; description: string; subject: string; questions: CustomQuestion[] | string }>`
       select title, description, subject, questions
       from custom_quizzes
-      where slug = ${data}
+      where lower(slug) = lower(${data}) or join_code = upper(${data})
     `;
     const row = rows[0];
     if (!row) return null;
@@ -184,7 +220,8 @@ export const submitCustomAttempt = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     const sql = await getSql();
     const rows = await sql<{ id: number; questions: CustomQuestion[] | string }>`
-      select id, questions from custom_quizzes where slug = ${data.slug}
+      select id, questions from custom_quizzes
+      where lower(slug) = lower(${data.slug}) or join_code = upper(${data.slug})
     `;
     const row = rows[0];
     if (!row) throw new Error("Квиз табылмады");
@@ -208,14 +245,19 @@ export const listMyQuizzes = createServerFn({ method: "GET" })
   .handler(async ({ context }): Promise<OwnQuiz[]> => {
     const sql = await getSql();
     const rows = await sql<QuestionRow>`
-      select q.id, q.slug, q.title, q.description, q.subject, q.visibility, q.questions,
+      select q.id, q.slug, q.join_code, q.title, q.description, q.subject, q.visibility, q.questions,
              q.created_at::text as created_at,
              (select count(*)::int from custom_attempts a where a.quiz_id = q.id) as participants
       from custom_quizzes q
       where q.user_id = ${context.userId}
       order by q.created_at desc
     `;
-    return rows.map(toOwn);
+    return Promise.all(
+      rows.map(async (row) => {
+        row.join_code = await ensureJoinCode(sql, row);
+        return toOwn(row);
+      }),
+    );
   });
 
 export const getOwnQuiz = createServerFn({ method: "GET" })
@@ -227,13 +269,16 @@ export const getOwnQuiz = createServerFn({ method: "GET" })
   .handler(async ({ context, data }): Promise<OwnQuiz | null> => {
     const sql = await getSql();
     const rows = await sql<QuestionRow>`
-      select id, slug, title, description, subject, visibility, questions,
+      select id, slug, join_code, title, description, subject, visibility, questions,
              created_at::text as created_at,
              (select count(*)::int from custom_attempts a where a.quiz_id = custom_quizzes.id) as participants
       from custom_quizzes
       where id = ${data} and user_id = ${context.userId}
     `;
-    return rows[0] ? toOwn(rows[0]) : null;
+    const row = rows[0];
+    if (!row) return null;
+    row.join_code = await ensureJoinCode(sql, row);
+    return toOwn(row);
   });
 
 export const createCustomQuiz = createServerFn({ method: "POST" })
@@ -243,8 +288,9 @@ export const createCustomQuiz = createServerFn({ method: "POST" })
     await requirePro(context.userId);
     const sql = await getSql();
     const slug = newSlug();
-    const rows = await sql<{ id: number; slug: string }>`
-      insert into custom_quizzes (user_id, title, description, subject, visibility, questions, slug)
+    const joinCode = newCode();
+    const rows = await sql<{ id: number; slug: string; join_code: string }>`
+      insert into custom_quizzes (user_id, title, description, subject, visibility, questions, slug, join_code)
       values (
         ${context.userId},
         ${data.title},
@@ -252,11 +298,12 @@ export const createCustomQuiz = createServerFn({ method: "POST" })
         ${data.subject},
         ${data.visibility},
         ${JSON.stringify(data.questions)}::jsonb,
-        ${slug}
+        ${slug},
+        ${joinCode}
       )
-      returning id, slug
+      returning id, slug, join_code
     `;
-    return { id: rows[0]?.id ?? 0, slug: rows[0]?.slug ?? slug };
+    return { id: rows[0]?.id ?? 0, slug: rows[0]?.slug ?? slug, join_code: rows[0]?.join_code ?? joinCode };
   });
 
 export const updateCustomQuiz = createServerFn({ method: "POST" })

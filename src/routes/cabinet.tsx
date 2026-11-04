@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { ShareQuiz } from "@/components/share-quiz";
 import { Shell } from "@/components/shell";
 import { RedirectToSignIn } from "@/lib/auth/gates";
 import { useCurrentUserState } from "@/lib/auth/use-current-user";
@@ -17,7 +18,6 @@ function CabinetPage() {
   const [mine, setMine] = useState<OwnQuiz[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [rank, setRank] = useState<WeeklyRank | null>(null);
-  const [copied, setCopied] = useState<number | null>(null);
 
   useEffect(() => {
     if (!user) return;
@@ -171,26 +171,25 @@ function CabinetPage() {
             <p className="mt-1 text-sm text-muted">Тек өз квизіңді өңдей аласың.</p>
           </div>
           <Link to="/create" className="btn-3d">
-            + Квиз жасау
+            AI квиз
           </Link>
         </div>
         {mine && mine.length === 0 ? (
           <p className="mt-6 text-muted">Әлі өз квизің жоқ.</p>
         ) : (
           <ul className="mt-6 grid gap-3">
-            {mine?.map((quiz) => {
-              const link = `${typeof window === "undefined" ? "" : window.location.origin}/play/${quiz.slug}`;
-              return (
+            {mine?.map((quiz) => (
                 <li key={quiz.id} className="rounded-card border border-line bg-panel p-5">
-                  <div className="flex flex-wrap items-start justify-between gap-3">
-                    <div>
-                      <p className="font-mono text-xs tracking-[0.16em] text-signal">{quiz.subject}</p>
-                      <h3 className="mt-1 text-xl font-semibold">{quiz.title}</h3>
-                      <p className="mt-1 text-sm text-muted">
-                        {quiz.visibility === "public" ? "Барлығына ашық" : "Жеке"} · {quiz.questions.length} сұрақ ·{" "}
-                        {quiz.participants} қатысушы
-                      </p>
-                    </div>
+                  <div>
+                    <p className="font-mono text-xs tracking-[0.16em] text-signal">{quiz.subject}</p>
+                    <h3 className="mt-1 text-xl font-semibold">{quiz.title}</h3>
+                    <p className="mt-1 text-sm text-muted">
+                      {quiz.visibility === "public" ? "Барлығына ашық" : "Жеке"} · {quiz.questions.length} сұрақ ·{" "}
+                      {quiz.participants} қатысушы
+                    </p>
+                  </div>
+                  <div className="mt-4">
+                    <ShareQuiz title={quiz.title} slug={quiz.slug} code={quiz.join_code} />
                   </div>
                   <div className="mt-4 flex flex-wrap gap-2">
                     <Link
@@ -209,15 +208,6 @@ function CabinetPage() {
                     </Link>
                     <button
                       type="button"
-                      className="h-11 rounded-xl border border-line px-4 font-semibold"
-                      onClick={() => {
-                        void navigator.clipboard.writeText(link).then(() => setCopied(quiz.id));
-                      }}
-                    >
-                      {copied === quiz.id ? "Көшірілді" : "Сілтеме"}
-                    </button>
-                    <button
-                      type="button"
                       className="h-11 rounded-xl px-4 font-semibold text-gold"
                       onClick={() => {
                         if (!window.confirm("Квизді өшіру керек пе?")) return;
@@ -230,8 +220,7 @@ function CabinetPage() {
                     </button>
                   </div>
                 </li>
-              );
-            })}
+            ))}
           </ul>
         )}
 

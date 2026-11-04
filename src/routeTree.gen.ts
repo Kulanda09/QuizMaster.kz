@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as BattleRouteImport } from './routes/battle'
 import { Route as CabinetRouteImport } from './routes/cabinet'
 import { Route as CreateRouteImport } from './routes/create'
+import { Route as JoinRouteImport } from './routes/join'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as ProRouteImport } from './routes/pro'
 import { Route as EditIdRouteImport } from './routes/edit.$id'
@@ -39,6 +40,11 @@ const CabinetRoute = CabinetRouteImport.update({
 const CreateRoute = CreateRouteImport.update({
   id: '/create',
   path: '/create',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const JoinRoute = JoinRouteImport.update({
+  id: '/join',
+  path: '/join',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -82,6 +88,7 @@ export interface FileRoutesByFullPath {
   '/battle': typeof BattleRoute
   '/cabinet': typeof CabinetRoute
   '/create': typeof CreateRoute
+  '/join': typeof JoinRoute
   '/login': typeof LoginRoute
   '/pro': typeof ProRoute
   '/edit/$id': typeof EditIdRoute
@@ -95,6 +102,7 @@ export interface FileRoutesByTo {
   '/battle': typeof BattleRoute
   '/cabinet': typeof CabinetRoute
   '/create': typeof CreateRoute
+  '/join': typeof JoinRoute
   '/login': typeof LoginRoute
   '/pro': typeof ProRoute
   '/edit/$id': typeof EditIdRoute
@@ -109,6 +117,7 @@ export interface FileRoutesById {
   '/battle': typeof BattleRoute
   '/cabinet': typeof CabinetRoute
   '/create': typeof CreateRoute
+  '/join': typeof JoinRoute
   '/login': typeof LoginRoute
   '/pro': typeof ProRoute
   '/edit/$id': typeof EditIdRoute
@@ -124,6 +133,7 @@ export interface FileRouteTypes {
     | '/battle'
     | '/cabinet'
     | '/create'
+    | '/join'
     | '/login'
     | '/pro'
     | '/edit/$id'
@@ -137,6 +147,7 @@ export interface FileRouteTypes {
     | '/battle'
     | '/cabinet'
     | '/create'
+    | '/join'
     | '/login'
     | '/pro'
     | '/edit/$id'
@@ -150,6 +161,7 @@ export interface FileRouteTypes {
     | '/battle'
     | '/cabinet'
     | '/create'
+    | '/join'
     | '/login'
     | '/pro'
     | '/edit/$id'
@@ -164,6 +176,7 @@ export interface RootRouteChildren {
   BattleRoute: typeof BattleRoute
   CabinetRoute: typeof CabinetRoute
   CreateRoute: typeof CreateRoute
+  JoinRoute: typeof JoinRoute
   LoginRoute: typeof LoginRoute
   ProRoute: typeof ProRoute
   EditIdRoute: typeof EditIdRoute
@@ -201,6 +214,13 @@ declare module '@tanstack/react-router' {
       path: '/create'
       fullPath: '/create'
       preLoaderRoute: typeof CreateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/join': {
+      id: '/join'
+      path: '/join'
+      fullPath: '/join'
+      preLoaderRoute: typeof JoinRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -260,6 +280,7 @@ const rootRouteChildren: RootRouteChildren = {
   BattleRoute: BattleRoute,
   CabinetRoute: CabinetRoute,
   CreateRoute: CreateRoute,
+  JoinRoute: JoinRoute,
   LoginRoute: LoginRoute,
   ProRoute: ProRoute,
   EditIdRoute: EditIdRoute,

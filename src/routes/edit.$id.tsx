@@ -1,5 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { ShareQuiz } from "@/components/share-quiz";
 import { QuizForm } from "@/components/quiz-form";
 import { Shell } from "@/components/shell";
 import { RedirectToSignIn } from "@/lib/auth/gates";
@@ -13,7 +14,6 @@ function EditPage() {
   const { user, isPending } = useCurrentUserState();
   const navigate = useNavigate();
   const [quiz, setQuiz] = useState<OwnQuiz | null | undefined>(undefined);
-  const [copied, setCopied] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -59,18 +59,18 @@ function EditPage() {
     );
   }
 
-  const link = typeof window === "undefined" ? `/play/${quiz.slug}` : `${window.location.origin}/play/${quiz.slug}`;
+  const current = quiz;
 
   async function save(draft: QuizDraft) {
-    await updateCustomQuiz({ data: { id: quiz!.id, ...draft } });
-    setQuiz({ ...quiz!, ...draft });
+    await updateCustomQuiz({ data: { id: current.id, ...draft } });
+    setQuiz({ ...current, ...draft });
   }
 
   async function remove() {
     if (!window.confirm("Квизді өшіру керек пе?")) return;
     setError(null);
     try {
-      await deleteCustomQuiz({ data: quiz!.id });
+      await deleteCustomQuiz({ data: current.id });
       await navigate({ to: "/cabinet" });
     } catch (err) {
       setError(err instanceof Error ? err.message : "Өшпеді");
@@ -80,32 +80,18 @@ function EditPage() {
   return (
     <Shell>
       <main className="mx-auto max-w-2xl px-4 py-10 sm:px-6">
-        <p className="font-mono text-xs tracking-[0.22em] text-signal">EDIT</p>
-        <h1 className="mt-2 text-3xl font-semibold tracking-tight">Квизді өңдеу</h1>
-        <div className="mt-6 rounded-card border border-line bg-panel p-4">
-          <p className="text-sm text-muted">Жеке сілтеме</p>
-          <p className="mt-1 break-all font-mono text-sm text-gold">{link}</p>
-          <div className="mt-3 flex flex-wrap gap-2">
-            <button
-              type="button"
-              className="h-11 rounded-xl border border-line px-4 font-semibold"
-              onClick={() => {
-                void navigator.clipboard.writeText(link).then(() => {
-                  setCopied(true);
-                });
-              }}
-            >
-              {copied ? "Көшірілді" : "Сілтемені көшіру"}
-            </button>
-            <Link
-              to="/results/$id"
-              params={{ id: String(quiz.id) }}
-              className="inline-flex h-11 items-center rounded-xl border border-line px-4 font-semibold"
-            >
-              Нәтижелер · {quiz.participants}
-            </Link>
-          </div>
+        <p className="text-sm font-semibold tracking-[0.16em] text-signal">БӨЛІСУ</p>
+        <h1 className="mt-2 text-3xl font-extrabold tracking-tight">{quiz.title}</h1>
+        <div className="mt-6">
+          <ShareQuiz title={quiz.title} slug={quiz.slug} code={quiz.join_code} />
         </div>
+        <Link
+          to="/results/$id"
+          params={{ id: String(quiz.id) }}
+          className="mt-4 inline-flex h-11 items-center font-semibold text-signal"
+        >
+          Нәтижелер · {quiz.participants}
+        </Link>
         <div className="mt-8">
           <QuizForm
             key={`${quiz.id}-${quiz.questions.length}`}
