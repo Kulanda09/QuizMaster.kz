@@ -31,6 +31,10 @@ export const Route = createRootRoute({
   component: () => (
     <html lang="kk" suppressHydrationWarning>
       <head>
+        <meta
+          name="google-site-verification"
+          content="daT5Tr0_W4cPl3asgrR4K9yEHwEBkrjFx5Ny9juRpN8"
+        />
         <HeadContent />
       </head>
       <body>
